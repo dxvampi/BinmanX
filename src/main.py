@@ -1,7 +1,7 @@
 import sys
-from binman.config import ConfigManager
-from binman.models import Binary
-from binman.executor import Executor
+from src.config import ConfigManager
+from src.models import Binary
+from src.executor import Executor
 
 
 class BinmanCLI:
