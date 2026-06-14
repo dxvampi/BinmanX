@@ -1,11 +1,11 @@
 import json
 from pathlib import Path
 from typing import Dict
-from binman.models import Binary
+from binmanx.models import Binary
 
 class ConfigManager:
     def __init__(self):
-        self.config_dir = Path.home() / ".config" / "binman"
+        self.config_dir = Path.home() / ".config" / "binmanx"
         self.config_file = self.config_dir / "config.json"
 
     def load_binaries(self) -> Dict[str, Binary]:
@@ -27,3 +27,15 @@ class ConfigManager:
 
         with open(self.config_file, "w", encoding="utf-8") as f:
             json.dump(raw_data, f, indent=2)
+
+    def get_all_aliases(self):
+        binaries = self.load_binaries()
+        return [(alias, binary.path) for alias, binary in binaries.items()]
+
+    def delete_alias_by_name(self, alias_name: str) -> bool:
+        binaries = self.load_binaries()
+        if alias_name in binaries:
+            del binaries[alias_name]
+            self.save_binaries(binaries)
+            return True
+        return False

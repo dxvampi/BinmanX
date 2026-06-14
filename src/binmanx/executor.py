@@ -1,7 +1,7 @@
 import subprocess
 import sys
 from typing import List, Optional
-from binman.models import Binary
+from binmanx.models import Binary
 
 
 class Executor:

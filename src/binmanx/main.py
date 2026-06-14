@@ -1,12 +1,58 @@
 import sys
-from binman.config import ConfigManager
-from binman.models import Binary
-from binman.executor import Executor
+from binmanx.config import ConfigManager
+from binmanx.models import Binary
+from binmanx.executor import Executor
 
 
 class BinmanCLI:
     def __init__(self):
         self.config_manager = ConfigManager()
+
+    def _show_aliases(self) -> list:
+        aliases = self.config_manager.get_all_aliases()
+        if not aliases:
+            print("No alias is saved yet.")
+            return []
+
+        for indice, (alias, ruta) in enumerate(aliases):
+            print(f"{indice}. {alias} ({ruta})")
+
+        return aliases
+
+    def run_list(self) -> None:
+        self._show_aliases()
+
+    def run_delete(self) -> None:
+        while True:
+            aliases = self._show_aliases()
+
+            if not aliases:
+                break
+
+            try:
+                selection = input("Select an option to delete: ").strip()
+                if not selection:
+                    print("Empty selection, try again")
+                    continue
+
+                index = int(selection)
+
+                if 0 <= index < len(aliases):
+                    alias_to_delete, path_to_delete = aliases[index]
+
+                    self.config_manager.delete_alias_by_name(alias_to_delete)
+                    print(f"Deleted {index} ({alias_to_delete} [{path_to_delete}]) successfully!")
+                else:
+                    print("Number out of range. Select a valid one.")
+                    continue
+
+            except ValueError:
+                print("Please, introduce a valid number.")
+                continue
+
+            more = input("Want to delete more? [y/N] ").strip().lower()
+            if more != 'y':
+                break
 
     def run_config(self) -> None:
         print("--- Binman Configuration ---")
@@ -46,6 +92,8 @@ class BinmanCLI:
         if "-b" not in args:
             print("Error: Missing binary alias. Use: binman -b <codename> [args]")
             print("Or configure new binaries using: binman config")
+            print("Show saved aliases using: binman list")
+            print("Delete aliases using: binman delete")
             sys.exit(1)
 
         try:
@@ -72,8 +120,16 @@ def main():
     cli = BinmanCLI()
     args = sys.argv[1:]
 
-    if len(args) > 0 and args[0] == "config":
-        cli.run_config()
+    if len(args) > 0:
+        comando = args[0]
+        if comando == "config":
+            cli.run_config()
+        elif comando == "list":
+            cli.run_list()
+        elif comando == "delete":
+            cli.run_delete()
+        else:
+            cli.run_execution(args)
     else:
         cli.run_execution(args)
 
