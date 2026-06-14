@@ -4,7 +4,7 @@ from binmanx.models import Binary
 from binmanx.executor import Executor
 
 
-class BinmanCLI:
+class BinmanxCLI:
     def __init__(self):
         self.config_manager = ConfigManager()
 
@@ -55,7 +55,7 @@ class BinmanCLI:
                 break
 
     def run_config(self) -> None:
-        print("--- Binman Configuration ---")
+        print("--- Binmanx Configuration ---")
         binaries = self.config_manager.load_binaries()
 
         while True:
@@ -86,14 +86,14 @@ class BinmanCLI:
         self.config_manager.save_binaries(binaries)
         print("\nConfiguration saved!")
         for name, binary in binaries.items():
-            print(f"{name} ({binary.path}) is ready to use! (binman -b {name} args)")
+            print(f"{name} ({binary.path}) is ready to use! (binmanx -b {name} args)")
 
     def run_execution(self, args: list) -> None:
         if "-b" not in args:
-            print("Error: Missing binary alias. Use: binman -b <codename> [args]")
-            print("Or configure new binaries using: binman config")
-            print("Show saved aliases using: binman list")
-            print("Delete aliases using: binman delete")
+            print("Error: Missing binary alias. Use: binmanx -b <codename> [args]")
+            print("Or configure new binaries using: binmanx config")
+            print("Show saved aliases using: binmanx list")
+            print("Delete aliases using: binmanx delete")
             sys.exit(1)
 
         try:
@@ -105,7 +105,7 @@ class BinmanCLI:
 
         binaries = self.config_manager.load_binaries()
         if codename not in binaries:
-            print(f"Error: Codename '{codename}' not found. Run 'binman config' first.")
+            print(f"Error: Codename '{codename}' not found. Run 'binmanx config' first.")
             sys.exit(1)
 
         target_binary = binaries[codename]
@@ -117,7 +117,7 @@ class BinmanCLI:
 
 
 def main():
-    cli = BinmanCLI()
+    cli = BinmanxCLI()
     args = sys.argv[1:]
 
     if len(args) > 0:
